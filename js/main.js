@@ -65,19 +65,49 @@ function filterCategory(category) {
 }
 
 /* =========================
-   الذكاء الاصطناعي (مؤقت)
+   الذكاء الاصطناعي (بحث ذكي)
 ========================= */
 function answerQuestion() {
-  const question = document.getElementById("question").value;
+  const questionInput = document
+    .getElementById("question")
+    .value
+    .trim()
+    .toLowerCase();
 
-  if (question.trim() === "") {
-    document.getElementById("answer").innerText =
+  const answerBox = document.getElementById("answer");
+
+  if (questionInput === "") {
+    answerBox.innerHTML =
       "❗ من فضلك اكتب سؤالاً أولاً";
     return;
   }
 
-  document.getElementById("answer").innerText =
-    "🤖 سيتم ربط الذكاء الاصطناعي الحقيقي لاحقًا، هذا الجواب للاستئناس فقط.";
+  // البحث في الفتاوى
+  const result = fatwas.find(fatwa =>
+    fatwa.q.toLowerCase().includes(questionInput) ||
+    questionInput.includes(
+      fatwa.q.toLowerCase().split(" ")[0]
+    )
+  );
+
+  if (result) {
+    answerBox.innerHTML = `
+      <div class="fatwa">
+        <strong>📌 السؤال:</strong><br>
+        ${result.q}<br><br>
+
+        <strong>✅ الجواب:</strong><br>
+        ${result.a}<br><br>
+
+        <em>📚 المصدر: ${result.src}</em>
+      </div>
+    `;
+  } else {
+    answerBox.innerHTML = `
+      🤖 لم أجد فتوى مطابقة لهذا السؤال.<br>
+      حاول صياغة السؤال بطريقة أخرى أو ابحث في قسم الفتاوى.
+    `;
+  }
 }
 
 /* =========================
