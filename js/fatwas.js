@@ -1,21 +1,27 @@
-fetch("js/data/fatwas.json")
-  .then(res => res.json())
-  .then(fatwas => {
-    const box = document.getElementById("fatwaList");
-    if (!box) return;
+/* =========================
+   قاعدة بيانات الفتاوى
+========================= */
 
-    box.innerHTML = "";
-
-    fatwas.forEach(f => {
-      box.innerHTML += `
-        <div class="fatwa">
-          <h3>${f.question}</h3>
-          <p>${f.answer}</p>
-          <small>${f.category}</small>
-        </div>
-      `;
-    });
-  })
-  .catch(err => {
-    console.error("خطأ تحميل الفتاوى", err);
-  });
+const fatwas = [
+  {
+    id: 1,
+    category: "salat",
+    q: "ما حكم الصلاة بدون وضوء؟",
+    a: "الصلاة لا تصح بدون وضوء، لقول النبي ﷺ: لا تُقبل صلاة بغير طهور.",
+    src: "فتاوى العلماء"
+  },
+  {
+    id: 2,
+    category: "siyam",
+    q: "هل يجوز الإفطار في رمضان للمريض؟",
+    a: "يجوز للمريض الإفطار إذا كان الصوم يضرّه أو يشقّ عليه، ويقضي بعد ذلك.",
+    src: "فقه الصيام"
+  },
+  {
+    id: 3,
+    category: "fiqh",
+    q: "ما حكم البيع بالتقسيط؟",
+    a: "البيع بالتقسيط جائز إذا كان الثمن محددًا من البداية ولا يتضمن ربا.",
+    src: "فقه المعاملات"
+  }
+];
