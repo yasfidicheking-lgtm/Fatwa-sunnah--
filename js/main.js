@@ -1,90 +1,88 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================
+   التنقل بين الأقسام
+========================= */
+function showSection(id) {
+  document.getElementById("fatwas").style.display = "none";
+  document.getElementById("ai").style.display = "none";
+  document.getElementById(id).style.display = "block";
+}
 
-  let fatwas = [];
+/* =========================
+   عرض الفتاوى
+========================= */
+function renderFatwas(list) {
+  const container = document.getElementById("fatwaList");
+  container.innerHTML = "";
 
-  // تحميل الفتاوى من JSON
-  fetch("js/data/fatwas.json")
-    .then(response => response.json())
-    .then(data => {
-      fatwas = data;
-      renderFatwas(fatwas);
-    })
-    .catch(error => {
-      console.error("خطأ في تحميل ملف الفتاوى:", error);
-      document.getElementById("fatwaList").innerHTML =
-        "<p>تعذّر تحميل الفتاوى</p>";
-    });
+  if (list.length === 0) {
+    container.innerHTML = "<p>لا توجد فتاوى مطابقة 🔍</p>";
+    return;
+  }
 
-  // عرض الفتاوى
-  window.renderFatwas = function(list) {
-    const container = document.getElementById("fatwaList");
-    container.innerHTML = "";
+  list.forEach(fatwa => {
+    const div = document.createElement("div");
+    div.className = "fatwa";
 
-    if (list.length === 0) {
-      container.innerHTML = "<p>لا توجد فتاوى</p>";
-      return;
-    }
+    div.innerHTML = `
+      <strong>السؤال:</strong> ${fatwa.q}<br>
+      <strong>الجواب:</strong> ${fatwa.a}<br>
+      <em>المصدر: ${fatwa.src}</em>
+    `;
 
-    list.forEach(fatwa => {
-      const div = document.createElement("div");
-      div.className = "fatwa";
+    container.appendChild(div);
+  });
+}
 
-      div.innerHTML = `
-        <h3>${fatwa.question}</h3>
-        <p>${fatwa.answer}</p>
-        <small>التصنيف: ${fatwa.category}</small>
-      `;
+/* =========================
+   البحث
+========================= */
+function searchFatwa() {
+  const value = document
+    .getElementById("searchInput")
+    .value
+    .toLowerCase();
 
-      container.appendChild(div);
-    });
-  };
+  const filtered = fatwas.filter(f =>
+    f.q.toLowerCase().includes(value) ||
+    f.a.toLowerCase().includes(value)
+  );
 
-  // فلترة حسب التصنيف
-  window.filterCategory = function(category) {
-    if (category === "الكل") {
-      renderFatwas(fatwas);
-    } else {
-      const filtered = fatwas.filter(f =>
-        f.category.trim() === category.trim()
-      );
-      renderFatwas(filtered);
-    }
-  };
+  renderFatwas(filtered);
+}
 
-  // البحث في الفتاوى
-  window.searchFatwa = function() {
-    const keyword = document
-      .getElementById("searchInput")
-      .value
-      .toLowerCase();
-
-    const results = fatwas.filter(f =>
-      f.question.toLowerCase().includes(keyword) ||
-      f.answer.toLowerCase().includes(keyword)
+/* =========================
+   التصنيفات
+========================= */
+function filterCategory(category) {
+  if (category === "all") {
+    renderFatwas(fatwas);
+  } else {
+    const filtered = fatwas.filter(
+      f => f.category === category
     );
+    renderFatwas(filtered);
+  }
+}
 
-    renderFatwas(results);
-  };
+/* =========================
+   الذكاء الاصطناعي (مؤقت)
+========================= */
+function answerQuestion() {
+  const question = document.getElementById("question").value;
 
-  // التنقل بين الأقسام
-  window.showSection = function(sectionId) {
-    document.getElementById("fatwas").style.display = "none";
-    document.getElementById("ai").style.display = "none";
-    document.getElementById(sectionId).style.display = "block";
-  };
+  if (question.trim() === "") {
+    document.getElementById("answer").innerText =
+      "❗ من فضلك اكتب سؤالاً أولاً";
+    return;
+  }
 
-  // ذكاء اصطناعي بسيط (مؤقت)
-  window.answerQuestion = function() {
-    const q = document.getElementById("aiQuestion").value.trim();
-    const answerBox = document.getElementById("answer");
+  document.getElementById("answer").innerText =
+    "🤖 سيتم ربط الذكاء الاصطناعي الحقيقي لاحقًا، هذا الجواب للاستئناس فقط.";
+}
 
-    if (!q) {
-      answerBox.textContent = "من فضلك اكتب سؤالاً.";
-      return;
-    }
-
-    answerBox.textContent =
-      "هذا جواب تجريبي. سيتم ربط ذكاء اصطناعي حقيقي لاحقاً إن شاء الله.";
-  };
-
+/* =========================
+   تشغيل أولي
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  renderFatwas(fatwas);
 });
