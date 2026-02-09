@@ -1,7 +1,7 @@
-fetch("data/fatwas.json")
+fetch("js/data/fatwas.json")
   .then(res => res.json())
   .then(fatwas => {
-    const box = document.getElementById("fatwas");
+    const box = document.getElementById("fatwaList");
     if (!box) return;
 
     box.innerHTML = "";
@@ -9,10 +9,13 @@ fetch("data/fatwas.json")
     fatwas.forEach(f => {
       box.innerHTML += `
         <div class="fatwa">
-          <h4>س: ${f.question}</h4>
-          <p><strong>ج:</strong> ${f.answer}</p>
+          <h3>${f.question}</h3>
+          <p>${f.answer}</p>
           <small>${f.category}</small>
         </div>
       `;
     });
+  })
+  .catch(err => {
+    console.error("خطأ تحميل الفتاوى", err);
   });
