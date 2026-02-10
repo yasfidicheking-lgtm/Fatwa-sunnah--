@@ -1,4 +1,18 @@
 /* =========================
+   استيراد المخزون
+========================= */
+import { fatwas } from "./fatwas.js";
+import { qaBank } from "./qa_bank.js";
+
+/* =========================
+   مخزون المجيب الآلي فقط
+========================= */
+const DATABASE = [
+  ...fatwas,
+  ...qaBank
+];
+
+/* =========================
    التنقل بين الأقسام
 ========================= */
 function showSection(id) {
@@ -8,7 +22,7 @@ function showSection(id) {
 }
 
 /* =========================
-   عرض الفتاوى
+   عرض الفتاوى (fatwas فقط)
 ========================= */
 function renderFatwas(list) {
   const container = document.getElementById("fatwaList");
@@ -38,7 +52,7 @@ function renderFatwas(list) {
 }
 
 /* =========================
-   البحث في الفتاوى
+   البحث العادي (fatwas فقط)
 ========================= */
 function searchFatwa() {
   const value = document
@@ -69,7 +83,7 @@ function filterCategory(category) {
 }
 
 /* =========================
-   الذكاء الاصطناعي (تشابه حقيقي)
+   المجيب الآلي (fatwas + qaBank)
 ========================= */
 function answerQuestion() {
   const questionInput = document
@@ -80,52 +94,42 @@ function answerQuestion() {
 
   const answerBox = document.getElementById("answer");
 
-  if (questionInput === "") {
+  if (!questionInput) {
     answerBox.innerHTML = "❗ من فضلك اكتب السؤال أولاً";
     return;
   }
 
-  // كلمات عامة ما مهمّاش
   const stopWords = [
     "ما", "ماهو", "ماهي", "هل", "حكم", "كيف", "لماذا",
     "في", "على", "عن", "من", "إلى", "هذا", "هذه"
   ];
 
-  // كلمات المستخدم المهمة
   const userWords = questionInput
     .split(" ")
-    .filter(word =>
-      word.length > 2 && !stopWords.includes(word)
-    );
+    .filter(w => w.length > 2 && !stopWords.includes(w));
 
   let bestMatch = null;
   let bestRatio = 0;
 
-  fatwas.forEach(fatwa => {
-    const fatwaWords = fatwa.q
+  DATABASE.forEach(item => {
+    const itemWords = item.q
       .toLowerCase()
       .split(" ")
-      .filter(word =>
-        word.length > 2 && !stopWords.includes(word)
-      );
+      .filter(w => w.length > 2 && !stopWords.includes(w));
 
-    let matchCount = 0;
-
+    let match = 0;
     userWords.forEach(word => {
-      if (fatwaWords.includes(word)) {
-        matchCount++;
-      }
+      if (itemWords.includes(word)) match++;
     });
 
-    const ratio = matchCount / userWords.length;
+    const ratio = match / userWords.length;
 
     if (ratio > bestRatio) {
       bestRatio = ratio;
-      bestMatch = fatwa;
+      bestMatch = item;
     }
   });
 
-  // شرط التشابه الحقيقي (60%)
   if (bestMatch && bestRatio >= 0.6) {
     answerBox.innerHTML = `
       <div class="fatwa">
@@ -135,14 +139,12 @@ function answerQuestion() {
         <strong>✅ الجواب:</strong><br>
         ${bestMatch.a}<br><br>
 
-        <em>📚 المصدر: ${bestMatch.src}</em>
+        <em>📚 المصدر: ${bestMatch.src || "غير محدد"}</em>
       </div>
     `;
   } else {
-    answerBox.innerHTML = `
-      ❌ لم يتم العثور على فتوى مطابقة لهذا السؤال.<br>
-      حاول إعادة صياغة السؤال.
-    `;
+    answerBox.innerHTML =
+      "❌ هذا السؤال غير موجود في المخزون.";
   }
 }
 
