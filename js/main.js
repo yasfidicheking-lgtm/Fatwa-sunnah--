@@ -8,6 +8,33 @@ function showSection(id) {
 }
 
 /* =========================
+   MENU ☰ (إضافة فقط)
+========================= */
+function toggleMenu() {
+  const menu = document.getElementById("sideMenu");
+  if (!menu) return;
+
+  menu.style.right =
+    menu.style.right === "0px" ? "-260px" : "0px";
+}
+
+/* إغلاق المينيو عند الضغط خارجها */
+document.addEventListener("click", function (e) {
+  const menu = document.getElementById("sideMenu");
+  const btn = document.querySelector(".menu-btn");
+
+  if (!menu || !btn) return;
+
+  if (
+    menu.style.right === "0px" &&
+    !menu.contains(e.target) &&
+    !btn.contains(e.target)
+  ) {
+    menu.style.right = "-260px";
+  }
+});
+
+/* =========================
    عرض الفتاوى
 ========================= */
 function renderFatwas(list) {
@@ -85,13 +112,11 @@ function answerQuestion() {
     return;
   }
 
-  // كلمات عامة ما مهمّاش
   const stopWords = [
     "ما", "ماهو", "ماهي", "هل", "حكم", "كيف", "لماذا",
     "في", "على", "عن", "من", "إلى", "هذا", "هذه"
   ];
 
-  // كلمات المستخدم المهمة
   const userWords = questionInput
     .split(" ")
     .filter(word =>
@@ -125,30 +150,4 @@ function answerQuestion() {
     }
   });
 
-  // شرط التشابه الحقيقي (60%)
-  if (bestMatch && bestRatio >= 0.6) {
-    answerBox.innerHTML = `
-      <div class="fatwa">
-        <strong>❓ السؤال:</strong><br>
-        ${bestMatch.q}<br><br>
-
-        <strong>✅ الجواب:</strong><br>
-        ${bestMatch.a}<br><br>
-
-        <em>📚 المصدر: ${bestMatch.src}</em>
-      </div>
-    `;
-  } else {
-    answerBox.innerHTML = `
-      ❌ لم يتم العثور على فتوى مطابقة لهذا السؤال.<br>
-      حاول إعادة صياغة السؤال.
-    `;
-  }
-}
-
-/* =========================
-   تشغيل أولي
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  renderFatwas(fatwas);
-});
+  if (bestMatch && bestRatio >= 0.6)
