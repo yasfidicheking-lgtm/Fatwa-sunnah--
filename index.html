@@ -13,9 +13,23 @@
        HEADER
   ========================= -->
   <header>
+    <!-- زر 3 الشرطات -->
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
     <h1>📖 موقع الفتاوى الإسلامية</h1>
     <p>للاستئناس فقط – الفتوى من أهل العلم</p>
   </header>
+
+  <!-- =========================
+       SIDE MENU
+  ========================= -->
+  <div id="sideMenu" class="side-menu">
+    <a onclick="showSection('fatwas'); toggleMenu()">📜 الفتاوى</a>
+    <a onclick="showSection('ai'); toggleMenu()">🤖 الذكاء الاصطناعي</a>
+    <hr>
+    <a href="#">📖 السنة</a>
+    <a href="#">📚 تعريفات</a>
+  </div>
 
   <!-- =========================
        NAVIGATION
@@ -80,6 +94,15 @@
   ========================= -->
   <script src="js/fatwas.js"></script>
   <script src="js/main.js"></script>
+
+  <!-- MENU SCRIPT -->
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("sideMenu");
+      menu.style.right =
+        menu.style.right === "0px" ? "-260px" : "0px";
+    }
+  </script>
 
 </body>
 </html>
