@@ -85,7 +85,7 @@ function searchFatwa() {
   renderFatwas(filtered);
 }
 
-// عرض جميع الفتاوى مباشرة عند فتح الموقع
+/* تشغيل افتراضي */
 renderFatwas(fatwas);
 
 /* =========================
@@ -140,7 +140,7 @@ function showSunna() {
 }
 
 /* =========================
-   الذكاء الاصطناعي
+   المجيب الآلي (من الفتاوى + السنة)
 ========================= */
 function answerQuestion() {
   const questionInput = document
@@ -156,6 +156,41 @@ function answerQuestion() {
     return;
   }
 
+  // البحث في الفتاوى
+  const fatwaResult = fatwas.find(f =>
+    f.q.toLowerCase().includes(questionInput) ||
+    questionInput.includes(f.q.toLowerCase())
+  );
+
+  if (fatwaResult) {
+    answerBox.innerHTML = `
+      <div class="fatwa">
+        <strong>✅ الجواب من الفتاوى:</strong><br><br>
+        ${fatwaResult.a}<br><br>
+        <em>📚 المصدر: ${fatwaResult.src}</em>
+      </div>
+    `;
+    return;
+  }
+
+  // البحث في السنة
+  const sunnaResult = sunnaQuestions.find(s =>
+    s.q.toLowerCase().includes(questionInput) ||
+    questionInput.includes(s.q.toLowerCase())
+  );
+
+  if (sunnaResult) {
+    answerBox.innerHTML = `
+      <div class="fatwa">
+        <strong>📜 الجواب من السنة:</strong><br><br>
+        ${sunnaResult.a}<br><br>
+        <em>📚 المصدر: ${sunnaResult.src}</em>
+      </div>
+    `;
+    return;
+  }
+
+  // ما لقى حتى جواب
   answerBox.innerHTML =
-    "🤖 هذا جواب تقريبي، يُرجى الرجوع لأهل العلم في الفتوى.";
+    "❌ لم يتم العثور على جواب مباشر في الفتاوى أو السنة. حاول صياغة السؤال بطريقة أخرى.";
 }
