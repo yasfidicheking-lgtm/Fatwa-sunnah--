@@ -9,7 +9,8 @@ function showSection(id) {
     if (el) el.style.display = "none";
   });
 
-  document.getElementById(id).style.display = "block";
+  const target = document.getElementById(id);
+  if (target) target.style.display = "block";
 }
 
 /* =========================
@@ -139,17 +140,13 @@ function showSunna() {
 
 /* =========================
    عرض التعريفات
+   (بلا بحث – بحال السنة)
 ========================= */
 function renderDefinitions(list) {
   const container = document.getElementById("definitionList");
   if (!container) return;
 
   container.innerHTML = "";
-
-  if (list.length === 0) {
-    container.innerHTML = "<p>🔍 لا توجد تعريفات مطابقة</p>";
-    return;
-  }
 
   list.forEach(item => {
     const div = document.createElement("div");
@@ -167,20 +164,6 @@ function renderDefinitions(list) {
 
     container.appendChild(div);
   });
-}
-
-function searchDefinition() {
-  const value = document
-    .getElementById("definitionSearch")
-    .value
-    .toLowerCase();
-
-  const filtered = definitions.filter(d =>
-    d.term.toLowerCase().includes(value) ||
-    d.def.toLowerCase().includes(value)
-  );
-
-  renderDefinitions(filtered);
 }
 
 function showDefinitions() {
@@ -260,4 +243,4 @@ function answerQuestion() {
   // لا يوجد جواب
   answerBox.innerHTML =
     "❌ لم يتم العثور على جواب مباشر. حاول صياغة السؤال بطريقة أخرى.";
-}
+     }
