@@ -2,15 +2,13 @@
    التنقل بين الأقسام
 ========================= */
 function showSection(id) {
-  const sections = ["fatwas", "sunna", "definitions", "ai"];
+  document.getElementById("fatwas").style.display = "none";
+  document.getElementById("ai").style.display = "none";
 
-  sections.forEach(sec => {
-    const el = document.getElementById(sec);
-    if (el) el.style.display = "none";
-  });
+  const sunnaSection = document.getElementById("sunna");
+  if (sunnaSection) sunnaSection.style.display = "none";
 
-  const target = document.getElementById(id);
-  if (target) target.style.display = "block";
+  document.getElementById(id).style.display = "block";
 }
 
 /* =========================
@@ -45,8 +43,6 @@ document.addEventListener("click", function (e) {
 ========================= */
 function renderFatwas(list) {
   const container = document.getElementById("fatwaList");
-  if (!container) return;
-
   container.innerHTML = "";
 
   if (list.length === 0) {
@@ -89,6 +85,9 @@ function searchFatwa() {
   renderFatwas(filtered);
 }
 
+/* تشغيل افتراضي */
+renderFatwas(fatwas);
+
 /* =========================
    التصفية حسب التصنيف
 ========================= */
@@ -102,9 +101,6 @@ function filterCategory(category) {
     renderFatwas(filtered);
   }
 }
-
-/* تشغيل افتراضي */
-renderFatwas(fatwas);
 
 /* =========================
    عرض السنة
@@ -134,46 +130,17 @@ function renderSunna() {
 }
 
 function showSunna() {
-  showSection("sunna");
+  document.getElementById("fatwas").style.display = "none";
+  document.getElementById("ai").style.display = "none";
+
+  const sunnaSection = document.getElementById("sunna");
+  sunnaSection.style.display = "block";
+
   renderSunna();
 }
 
 /* =========================
-   عرض التعريفات
-   (بلا بحث – بحال السنة)
-========================= */
-function renderDefinitions(list) {
-  const container = document.getElementById("definitionList");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  list.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "fatwa";
-
-    div.innerHTML = `
-      <strong>📌 المصطلح:</strong><br>
-      ${item.term}<br><br>
-
-      <strong>📖 التعريف:</strong><br>
-      ${item.def}<br><br>
-
-      <em>📚 المصدر: ${item.src}</em>
-    `;
-
-    container.appendChild(div);
-  });
-}
-
-function showDefinitions() {
-  showSection("definitions");
-  renderDefinitions(definitions);
-}
-
-/* =========================
-   المجيب الآلي
-   (فتاوى + سنة + تعريفات)
+   المجيب الآلي (من الفتاوى + السنة)
 ========================= */
 function answerQuestion() {
   const questionInput = document
@@ -223,7 +190,10 @@ function answerQuestion() {
     return;
   }
 
-  // البحث في التعريفات
+  // ما لقى حتى جواب
+  answerBox.innerHTML =
+    "❌ لم يتم العثور على جواب مباشر في الفتاوى أو السنة. حاول صياغة السؤال بطريقة أخرى.";
+          }  // البحث في التعريفات
   const defResult = definitions.find(d =>
     d.term.toLowerCase().includes(questionInput) ||
     questionInput.includes(d.term.toLowerCase())
