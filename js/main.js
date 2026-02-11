@@ -1,15 +1,18 @@
 // =========================================
+//    main.js - التحكم الرئيسي في الموقع
+// =========================================
+
+// =========================================
 //    التنقل بين الأقسام
 // =========================================
 function showSection(id) {
-    // إخفاء كل الأقسام أولاً
-    const sections = ["fatwas", "ai", "sunna"];
+    const sections = ["fatwas", "ai", "sunna", "definitions"];
+    
     sections.forEach(sec => {
         const el = document.getElementById(sec);
         if (el) el.style.display = "none";
     });
 
-    // إظهار القسم المطلوب
     const target = document.getElementById(id);
     if (target) {
         target.style.display = "block";
@@ -23,7 +26,6 @@ function toggleMenu() {
     const menu = document.getElementById("sideMenu");
     if (!menu) return;
 
-    // إذا كان مفتوحاً نغلقه، وإلا نفتحه
     if (menu.style.right === "0px" || menu.style.right === "") {
         menu.style.right = "-260px";
     } else {
@@ -71,18 +73,15 @@ function renderFatwas(list) {
             <div class="answer">
                 <strong>✅ الجواب:</strong><br>${fatwa.a || "غير متوفر"}
             </div>
-            <div class="source">
-                <em>📚 المصدر: ${fatwa.src || "غير محدد"}</em>
-            </div>
+            ${fatwa.src ? `<div class="source"><em>📚 المصدر: ${fatwa.src}</em></div>` : ""}
+            \( {fatwa.category ? `<div class="category-tag"> \){fatwa.category}</div>` : ""}
         `;
 
         container.appendChild(div);
     });
 }
 
-// =========================================
-//    البحث في الفتاوى (عند الكتابة)
-// =========================================
+// البحث في الفتاوى (عند الكتابة)
 function searchFatwa() {
     const input = document.getElementById("searchInput");
     if (!input) return;
@@ -104,32 +103,22 @@ function searchFatwa() {
     renderFatwas(filtered);
 }
 
-// =========================================
-//    التصفية حسب الفئة
-// =========================================
+// التصفية حسب الفئة
 function filterCategory(category) {
-    // إزالة الكلاس active من كل الأزرار
     document.querySelectorAll(".categories button").forEach(btn => {
         btn.classList.remove("active");
     });
 
-    // إضافة active للزر الذي تم الضغط عليه
     const clickedBtn = event.currentTarget;
     if (clickedBtn) clickedBtn.classList.add("active");
 
-    let listToShow;
-
-    if (category === "all") {
-        listToShow = fatwas;
-    } else {
-        listToShow = fatwas.filter(f => f.category === category);
-    }
+    let listToShow = category === "all" ? fatwas : fatwas.filter(f => f.category === category);
 
     renderFatwas(listToShow);
 }
 
 // =========================================
-//    عرض قسم السنة
+//    عرض السنة
 // =========================================
 function renderSunna() {
     const container = document.getElementById("sunnaList");
@@ -153,9 +142,7 @@ function renderSunna() {
             <div class="answer">
                 <strong>📜 الجواب:</strong><br>${item.a || "غير متوفر"}
             </div>
-            <div class="source">
-                <em>📚 المصدر: ${item.src || "غير محدد"}</em>
-            </div>
+            ${item.src ? `<div class="source"><em>المصدر: ${item.src}</em></div>` : ""}
         `;
 
         container.appendChild(div);
@@ -165,6 +152,43 @@ function renderSunna() {
 function showSunna() {
     showSection("sunna");
     renderSunna();
+}
+
+// =========================================
+//    عرض التعريفات
+// =========================================
+function renderDefinitions() {
+    const container = document.getElementById("definitionsList");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!definitions || definitions.length === 0) {
+        container.innerHTML = "<p class='no-results'>📚 لا توجد تعريفات حالياً</p>";
+        return;
+    }
+
+    definitions.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "definition fatwa";
+
+        div.innerHTML = `
+            <div class="term">
+                <strong>📖 ${item.term}</strong>
+            </div>
+            <div class="meaning">
+                ${item.meaning}
+            </div>
+            ${item.source ? `<div class="source"><em>المصدر: ${item.source}</em></div>` : ""}
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+function showDefinitions() {
+    showSection("definitions");
+    renderDefinitions();
 }
 
 // =========================================
@@ -184,7 +208,6 @@ function answerQuestion() {
     }
 
     const qLower = questionText.toLowerCase();
-
     answerBox.innerHTML = "<p class='loading'>جاري البحث...</p>";
 
     // البحث في الفتاوى أولاً
@@ -245,6 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("متغير 'fatwas' غير معرف أو ليس مصفوفة");
     }
 
-    // إذا كنت تريد عرض السنة تلقائياً في حالة معينة، أضف هنا
-    // showSunna();
+    // إذا أردت عرض قسم معين افتراضياً غير الفتاوى، يمكنك إضافة استدعاء هنا
+    // مثال: showDefinitions();
 });
