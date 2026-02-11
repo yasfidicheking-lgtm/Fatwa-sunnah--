@@ -93,3 +93,32 @@ input, textarea {
 .side-menu a:hover {
   background: #f4f6f3;
 }
+
+/* =========================
+   التعريفات (نفس ستايل الفتاوى)
+========================= */
+.definition {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.definition h3 {
+  margin: 0 0 8px 0;
+  color: #1e6f5c;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.definition p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.definition small {
+  display: block;
+  margin-top: 8px;
+  color: #777;
+  font-size: 13px;
+}
