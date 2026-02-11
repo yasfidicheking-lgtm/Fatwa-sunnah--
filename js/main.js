@@ -244,3 +244,6 @@ function answerQuestion() {
   answerBox.innerHTML =
     "❌ لم يتم العثور على جواب مباشر. حاول صياغة السؤال بطريقة أخرى.";
      }
+document.addEventListener("DOMContentLoaded", () => {
+  showSection("fatwas");
+});
